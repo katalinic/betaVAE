@@ -42,10 +42,7 @@ if training:
             np.random.shuffle(train_sprites)
             for i in range(int(train_sprites.shape[0]//BATCH_SIZE)):
                 batch_xs = train_sprites[i*BATCH_SIZE:(i+1)*BATCH_SIZE]
-                batch_loss, _ = sess.run([loss, optimise], feed_dict = {x: batch_xs, y: batch_xs})
-                moving_loss = batch_loss if i==0 else 0.99*moving_loss+0.01*batch_loss
-                sys.stdout.write(str(moving_loss) + ' ' + str(batch_loss)+'\r')
-                # sys.stdout.flush()
+                sess.run(optimise, feed_dict = {x: batch_xs, y: batch_xs})
             test_loss = sess.run(loss, feed_dict = {x: test_sprites, y: test_sprites})
             print ('Epoch : {}, Loss: {}, Time: {}'.format(ep, test_loss, time.time()-start_time))
 
