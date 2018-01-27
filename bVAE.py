@@ -14,8 +14,7 @@ def decoder(z, reuse=False):
         dec_hid1 = tf.contrib.layers.fully_connected(z, 1200, activation_fn=tf.nn.tanh)
         dec_hid2 = tf.contrib.layers.fully_connected(dec_hid1, 1200, activation_fn=tf.nn.tanh)
         dec_hid3 = tf.contrib.layers.fully_connected(dec_hid2, 1200, activation_fn=tf.nn.tanh)
-        dec_out = tf.contrib.layers.fully_connected(dec_hid3, 4096, activation_fn=tf.nn.sigmoid) #testing sigmoid instead of tanh
-        # dec_out = tf.nn.sigmoid(dec_out)
+        dec_out = tf.contrib.layers.fully_connected(dec_hid3, 4096, activation_fn=tf.nn.sigmoid)
         dec_out = tf.clip_by_value(dec_out, 1e-8, 1-1e-8)
     return dec_out
 
