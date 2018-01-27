@@ -4,7 +4,7 @@ import numpy as np
 def encoder(x, num_latents):
     with tf.variable_scope("encoder"):
         enc_hid1 = tf.contrib.layers.fully_connected(x, 1200, activation_fn=tf.nn.relu)
-        enc_hid2 = tf.contrib.layers.fully_connected(x, 1200, activation_fn=tf.nn.relu)
+        enc_hid2 = tf.contrib.layers.fully_connected(enc_hid1, 1200, activation_fn=tf.nn.relu)
         mean = tf.contrib.layers.fully_connected(enc_hid2, num_latents, activation_fn=None)
         #activation on latent not specified?
         var = tf.contrib.layers.fully_connected(enc_hid2, num_latents, activation_fn=tf.nn.softplus)+1e-6
