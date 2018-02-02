@@ -24,12 +24,13 @@ y = tf.placeholder(tf.float32, [None, dec_num_output])
 z = tf.placeholder(tf.float32, [None, num_latents])
 loss, optimise, mean, var, sample_dec_out = bVAE.build_VAE(x, y, z, num_latents, beta, lr)
 
+def sigmoid(z):
+    return 1.0/(1.0+np.exp(-z))
+
 # Training.
 if training:
     print ("Loading sprites.")
     train_sprites, test_sprites = sprites.prepare_sprites()
-    #temporary subset
-    # train_sprites = train_sprites[:100000]
     print ("Training commenced.")
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
@@ -52,6 +53,7 @@ if training:
             sampling_input = np.eye(num_latents)
             sampling_input = np.random.multivariate_normal(np.zeros(num_latents),np.eye(num_latents),num_samples).reshape(-1,num_latents)
             image_samples = sess.run(sample_dec_out, feed_dict = {z : sampling_input})
+            image_samples = sigmoid(image_samples)
             fig = plt.figure(figsize=(10,10))
             for n in range(1,num_samples+1):
                 ax = plt.subplot(int(num_samples/2),2,n)
@@ -87,8 +89,10 @@ else:
             all_means = np.tile(_mean, num_variations).reshape(num_variations, -1)
             all_means[:,latent] = varied_mean
             image_samples = sess.run(sample_dec_out, feed_dict = {z : all_means})
+            image_samples = sigmoid(image_samples)
             for n in range(1,num_variations+1):
                 ax = plt.subplot(num_variations,1,n)
+                ax.axis('off')
                 ax.imshow(image_samples[n-1].reshape(64,64),cmap='gray')
             plt.suptitle("Sprite latent traversal")
-            plt.savefig('plots/sprites2_e{}.png'.format(latent))
+            plt.savefig('plots/sprites_e{}.png'.format(latent),dpi=300, transparent=True, bbox_inches='tight')
