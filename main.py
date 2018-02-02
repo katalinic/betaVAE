@@ -94,5 +94,4 @@ else:
                 ax = plt.subplot(num_variations,1,n)
                 ax.axis('off')
                 ax.imshow(image_samples[n-1].reshape(64,64),cmap='gray')
-            plt.suptitle("Sprite latent traversal")
             plt.savefig('plots/sprites_e{}.png'.format(latent),dpi=300, transparent=True, bbox_inches='tight')
