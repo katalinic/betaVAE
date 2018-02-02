@@ -5,4 +5,4 @@ Latent traversal replication using the 2D shapes VAE architecture from A.2 Table
 
 Results after 20 epochs:
 
-![Latent traversal](https://github.com/katalinic/betaVAE/blob/master/latent_traversal_scaled.png)
+![Latent traversal](https://github.com/katalinic/betaVAE/blob/master/latent_traversal_scaled.png = 250x250)
