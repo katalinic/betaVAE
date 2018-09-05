@@ -36,8 +36,6 @@ loss, optimise, mean, var, sample_dec_out = bVAE.build_VAE(x, y, z, num_latents,
 if training:
     print ("Loading sprites.")
     train_sprites, test_sprites = sprites.prepare_sprites()
-    #temporary subset
-    train_sprites = train_sprites[:10000]
     print ("Training commenced.")
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
