@@ -11,7 +11,7 @@ flags = tf.app.flags
 FLAGS = tf.app.flags.FLAGS
 flags.DEFINE_integer("enc_num_input", 4096, "Input dimensionality.")
 flags.DEFINE_integer("dec_num_output", 4096, "Input dimensionality.")
-flags.DEFINE_integer("num_latents", 10, "Latent dimensionality."
+flags.DEFINE_integer("num_latents", 10, "Latent dimensionality.")
 flags.DEFINE_integer("num_epochs", 20, "Number of training epochs.")
 flags.DEFINE_integer("beta", 4, "Beta coefficient.")
 flags.DEFINE_integer("batch_size", 32, "Batch size.")
