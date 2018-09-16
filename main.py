@@ -11,7 +11,7 @@ flags = tf.app.flags
 FLAGS = tf.app.flags.FLAGS
 flags.DEFINE_integer("enc_num_input", 4096, "Input dimensionality.")
 flags.DEFINE_integer("dec_num_output", 4096, "Input dimensionality.")
-flags.DEFINE_integer("num_latents", 10, "Latent dimensionality."
+flags.DEFINE_integer("num_latents", 10, "Latent dimensionality.")
 flags.DEFINE_integer("num_epochs", 20, "Number of training epochs.")
 flags.DEFINE_integer("beta", 4, "Beta coefficient.")
 flags.DEFINE_integer("batch_size", 32, "Batch size.")
@@ -20,21 +20,19 @@ flags.DEFINE_boolean("training", False, "Boolean for training or testing.")
 flags.DEFINE_boolean("restore", False, "Boolean for restoring trained models.")
 flags.DEFINE_integer("num_samples", 10, "Number of samples for visualisation.")
 
-model_directory = './model_z{}_b{}/'.format(FLAGS.num_latents, FLAGS.beta)
-plot_directory = './plots_z{}_b{}/'.format(FLAGS.num_latents, FLAGS.beta)
-if not os.path.exists(model_directory):
-    os.mkdir(model_directory)
-
-# Build graph.
-x = tf.placeholder(tf.float32, [None, FLAGS.enc_num_input])
-y = tf.placeholder(tf.float32, [None, FLAGS.dec_num_output])
-z = tf.placeholder(tf.float32, [None, FLAGS.num_latents])
-loss, optimise, mean, logstd, sample_dec_out = model.build_VAE(
-    x, y, z, FLAGS.num_latents, FLAGS.beta, FLAGS.lr)
-
 def train():
     print("Loading sprites.")
     train_sprites, test_sprites = sprites.prepare_sprites()
+
+    model_directory = './model_z{}_b{}/'.format(FLAGS.num_latents, FLAGS.beta)
+
+    # Build graph.
+    x = tf.placeholder(tf.float32, [None, FLAGS.enc_num_input])
+    y = tf.placeholder(tf.float32, [None, FLAGS.dec_num_output])
+    z = tf.placeholder(tf.float32, [None, FLAGS.num_latents])
+    loss, optimise, _, _, _ = model.build_VAE(
+        x, y, z, FLAGS.num_latents, FLAGS.beta, FLAGS.lr)
+
     print("Training commenced.")
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
@@ -58,9 +56,17 @@ def test():
     def sigmoid(z):
         return 1.0/(1.0 + np.exp(-z))
 
+    # Build graph.
+    x = tf.placeholder(tf.float32, [None, FLAGS.enc_num_input])
+    y = tf.placeholder(tf.float32, [None, FLAGS.dec_num_output])
+    z = tf.placeholder(tf.float32, [None, FLAGS.num_latents])
+    _, _, mean, _, sample_dec_out = model.build_VAE(
+        x, y, z, FLAGS.num_latents, FLAGS.beta, FLAGS.lr)
+
     print("Creating latent traversal.")
     with tf.Session() as sess:
         # Load model.
+        model_directory = './model_z{}_b{}/'.format(FLAGS.num_latents, FLAGS.beta)
         saver = tf.train.Saver()
         chckpoint = tf.train.get_checkpoint_state(model_directory)
         saver.restore(sess, chckpoint.model_checkpoint_path)
@@ -71,6 +77,7 @@ def test():
         num_variations = len(varied_mean)
 
         # Generate variation images.
+        plot_directory = './plots_z{}_b{}/'.format(FLAGS.num_latents, FLAGS.beta)
         if not os.path.exists(plot_directory):
             os.mkdir(plot_directory)
         fig = plt.figure(figsize=(10, 10))
