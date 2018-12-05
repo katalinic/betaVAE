@@ -5,3 +5,4 @@ dsprites*
 capacity_old.py
 latent_analysis.py
 sprites_old.py
+pipeline.py
