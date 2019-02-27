@@ -20,6 +20,7 @@ flags.DEFINE_boolean("training", False, "Boolean for training or testing.")
 flags.DEFINE_boolean("restore", False, "Boolean for restoring trained models.")
 flags.DEFINE_integer("num_samples", 10, "Number of samples for visualisation.")
 
+
 def train():
     print("Loading sprites.")
     train_sprites, test_sprites = sprites.prepare_sprites()
@@ -40,17 +41,21 @@ def train():
         for ep in range(FLAGS.num_epochs):
             start_time = time.time()
             np.random.shuffle(train_sprites)
-            for i in range(int(train_sprites.shape[0]//FLAGS.batch_size)):
-                batch_xs = train_sprites[i * FLAGS.batch_size:(i + 1) * FLAGS.batch_size]
+            for i in range(int(train_sprites.shape[0] // FLAGS.batch_size)):
+                batch_xs = train_sprites[i * FLAGS.batch_size:
+                                         (i + 1) * FLAGS.batch_size]
                 sess.run(optimise, feed_dict={x: batch_xs, y: batch_xs})
-            test_loss = sess.run(loss, feed_dict={x: test_sprites, y: test_sprites})
+            test_loss = sess.run(
+                loss, feed_dict={x: test_sprites, y: test_sprites})
             print('Epoch : {}, Loss: {}, Time: {}'.format(
                 ep, test_loss, time.time() - start_time))
 
             # Save model.
             if not os.path.exists(model_directory):
                 os.mkdir(model_directory)
-            saver.save(sess, model_directory + 'model.checkpoint', global_step=ep)
+            saver.save(
+                sess, model_directory + 'model.checkpoint', global_step=ep)
+
 
 def test():
     def sigmoid(z):
@@ -72,19 +77,21 @@ def test():
         saver.restore(sess, chckpoint.model_checkpoint_path)
 
         image = sprites.load_sprites()[0].reshape(1, 4096)
-        _mean = sess.run(mean, feed_dict={x : image})
+        _mean = sess.run(mean, feed_dict={x: image})
         varied_mean = np.arange(-3, 3.01, 1)
         num_variations = len(varied_mean)
 
         # Generate variation images.
-        plot_directory = './plots_z{}_b{}/'.format(FLAGS.num_latents, FLAGS.beta)
+        plot_directory = './plots_z{}_b{}/'.format(
+            FLAGS.num_latents, FLAGS.beta)
         if not os.path.exists(plot_directory):
             os.mkdir(plot_directory)
         fig = plt.figure(figsize=(10, 10))
         for latent in range(FLAGS.num_latents):
-            all_means = np.tile(_mean, num_variations).reshape(num_variations, -1)
+            all_means = np.tile(_mean, num_variations)
+            all_means.reshape(num_variations, -1)
             all_means[:, latent] = varied_mean
-            image_samples = sess.run(sample_dec_out, feed_dict={z : all_means})
+            image_samples = sess.run(sample_dec_out, feed_dict={z: all_means})
             image_samples = sigmoid(image_samples)
             for n in range(1, num_variations + 1):
                 ax = plt.subplot(num_variations, 1, n)
@@ -93,11 +100,13 @@ def test():
             plt.savefig(plot_directory + 'sprites_e{}.png'.format(latent),
                         dpi=300, transparent=True, bbox_inches='tight')
 
+
 def main(_):
     if FLAGS.training:
         train()
     else:
         test()
+
 
 if __name__ == '__main__':
     tf.app.run()
