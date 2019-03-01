@@ -1,7 +1,6 @@
 __pycache__
 .DS_Store
 beta.pem
-dsprites*
 capacity_old.py
 latent_analysis.py
 sprites_old.py
